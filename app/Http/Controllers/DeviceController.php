@@ -84,8 +84,10 @@ class DeviceController extends Controller
             ->join('areas','devices.areaId','=','areas.id')
             ->select('schedules.deviceCode','schedules.type','schedules.fileVoice as play','schedules.startDate','schedules.endDate','schedules.time','schedules.endTime','schedules.created_at as time_created')
             ->where('areas.title','like','Linh Đàm')
-            ->where('schedules.startDate','like',$date)
-            ->orwhere('schedules.startDate','like',implode('-',array_reverse(explode('-',$date))))
+            ->where(function($q) use ($date){
+                $q->where('schedules.startDate','like',$date)
+                ->orwhere('schedules.startDate','like',implode('-',array_reverse(explode('-',$date))));
+            })
             ->get()->map(function($device, $key){
                 $type = ['none','file','streaming','fm','document','voice-record'
                 ];
