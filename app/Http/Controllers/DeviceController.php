@@ -57,7 +57,7 @@ class DeviceController extends Controller
             ->where('areas.title','like','Linh Đàm')
             ->get()
             ->map(function($device, $key){
-                $device->schedule_list = Schedule::select('type', 'fileVoice as play','startDate','endDate', 'time', 'created_at as time_created')->where('deviceCode',$device->deviceCode)->get()->map(function($item, $key){
+                $device->schedule_list = Schedule::select('type', 'fileVoice as play','startDate','endDate', 'time', 'created_at as time_created')->where('startDate','<>',null)->where('deviceCode',$device->deviceCode)->get()->map(function($item, $key){
                     $type = ['none','file','streaming','fm','document','voice-record'
                     ];
                     $item->type = $type[(integer)$item->type];
