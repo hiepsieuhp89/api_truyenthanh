@@ -53,7 +53,7 @@ class DeviceController extends Controller
             $devices = DB::table('devices')
             ->join('device_infos','devices.deviceCode','=','device_infos.deviceCode')
             ->join('areas','devices.areaId','=','areas.id')
-            ->select('device_infos.updated_at as last_update', 'device_infos.deviceCode', 'device_infos.status', 'device_infos.volume', 'device_infos.is_playing','device_infos.relay1','device_infos.relay2')
+            ->select('device_infos.deviceCode', 'device_infos.status', 'device_infos.volume', 'device_infos.is_playing','device_infos.relay1','device_infos.relay2')
             ->where('areas.title','like','Linh Đàm')
             ->get()
             ->map(function($device, $key){
