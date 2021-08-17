@@ -17,7 +17,8 @@ class DeviceController extends Controller
      */
     public function index()
     {
-        return Device::all();
+        return view('welcome');
+        //return Device::all();
     }
 
     /**
