@@ -88,7 +88,7 @@ class DeviceController extends Controller
             $devices = DB::table('devices')
             ->join('schedules','devices.deviceCode','=','schedules.deviceCode')
             ->join('areas','devices.areaId','=','areas.id')
-            ->select('schedules.deviceCode','schedules.type','schedules.fileVoice as play','schedules.startDate','schedules.endDate','schedules.time as endTime','schedules.endTime','schedules.created_at as time_created')
+            ->select('schedules.deviceCode','schedules.type','schedules.fileVoice as play','schedules.startDate','schedules.endDate','schedules.time as startTime','schedules.endTime','schedules.created_at as time_created')
             ->where('areas.title','like','Linh Đàm')
             ->where(function($q) use ($date){
                 $q->where('schedules.startDate','like',$date)
