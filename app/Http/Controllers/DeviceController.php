@@ -123,7 +123,10 @@ class DeviceController extends Controller
         $data = $req->all();
 
         if(!isset($data['deviceCode']) || !isset($data['url'])){
-            return 'Not enough parameters!';
+            return response([
+                'status' => 'false',
+                'messenge' => 'Missing parameters'
+            ]);
         }
         $devices = DB::table('devices')
             ->join('areas','devices.areaId','=','areas.id')
@@ -131,7 +134,10 @@ class DeviceController extends Controller
             ->where('devices.deviceCode','like',$data['deviceCode'])
             ->get();
         if(count($devices) == 0)
-            return 'Insufficient access!';
+            return response([
+                'status' => 'false',
+                'messenge' => 'Insufficient access'
+            ]);
 
         return $this->playOnline($data['deviceCode'],$data['url']);
     }
