@@ -194,11 +194,7 @@ class DeviceController extends Controller
     public function stopPlay($deviceCode)
     {
 
-        $deviceCode = implode(",", array_map(function($value){
-            return '{\"DeviceID\":\"' . $value . '\",\"CommandSend\":\"{\\\\\"Data\\\\\":\\\\\"Stop play music\\\\\\",\\\\\"PacketType\\\\\":7}\"}';
-        },$deviceCode));
-
-        $dataRequest = '{"DataType":4,"Data":"{\"CommandItem_Ts\":['.$deviceCode.']}"}';
+        $dataRequest = '{"DataType":4,"Data":"{\"CommandItem_Ts\":[{\"DeviceID\":\"' . $deviceCode . '\",\"CommandSend\":\"{\\\\\"Data\\\\\":\\\\\"Stop play music\\\\\\",\\\\\"PacketType\\\\\":7}\"}]}"}';
 
         return $this->curl_to_server($dataRequest);
     }
