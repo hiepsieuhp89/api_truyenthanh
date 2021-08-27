@@ -23,3 +23,7 @@ Route::get('devices/area/{name}', [DeviceController::class, 'showByArea']);
 Route::get('devices/area/{name}/schedule/{date}', [DeviceController::class, 'showByDate']);
 Route::apiResource('devices', DeviceController::class);
 
+Route::get('devices/area/', [DeviceController::class, 'showByArea']);
+
+Route::post('devices/area/linh-dam/play', [DeviceController::class, 'playNow']);
+

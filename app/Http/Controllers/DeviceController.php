@@ -112,6 +112,29 @@ class DeviceController extends Controller
         }
         
     }
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function playNow(Request $req)
+    {
+        $data = $req->all();
+
+        if(!isset($data['deviceCode']) || !isset($data['url'])){
+            return 'Not enough parameters!';
+        }
+        $devices = DB::table('devices')
+            ->join('areas','devices.areaId','=','areas.id')
+            ->where('areas.title','like','Linh Đàm')
+            ->where('devices.deviceCode','like',$data['deviceCode'])
+            ->get();
+        if(count($devices) == 0)
+            return 'Insufficient access!';
+
+        return $this->playOnline($data['deviceCode'],$data['url']);
+    }
 
     /**
      * Update the specified resource in storage.
@@ -134,5 +157,98 @@ class DeviceController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * A call api to play now a program
+     * 
+     * @var type is integer to know type play, play file, stream, documents,...
+     * @var deviceCode is string of devices array that are needed to stop play
+     * @var songName is url of media play
+     * @return curl_response
+     */
+    public function playOnline($deviceCode, $songName)
+    {
+        $dataRequest = '{"DataType":4,"Data":"{\"CommandItem_Ts\":[';
+
+        $dataRequest .= '{\"DeviceID\":\"' . trim($deviceCode) . '\",\"CommandSend\":\"{\\\\\"Data\\\\\":\\\\\"{\\\\\\\\\\\\\"PlayRepeatType\\\\\\\\\\\\\":1,\\\\\\\\\\\\\"PlayType\\\\\\\\\\\\\":1,\\\\\\\\\\\\\"SongName\\\\\\\\\\\\\":\\\\\\\\\\\\\"' . $songName . '\\\\\\\\\\\\\"}\\\\\",\\\\\"PacketType\\\\\":5}\"}';
+
+        $dataRequest .= ']}"}';
+
+        $this->stopPlay($deviceCode);
+
+        return $this->curl_to_server($dataRequest);
+    }
+    /**
+     * A call api to stop play of one or more devices
+     * 
+     * @var deviceCode is array of devices that are needed to stop play
+     * @return curl_response
+     */
+    public function stopPlay($deviceCode)
+    {
+
+        $deviceCode = implode(",", array_map(function($value){
+            return '{\"DeviceID\":\"' . $value . '\",\"CommandSend\":\"{\\\\\"Data\\\\\":\\\\\"Stop play music\\\\\\",\\\\\"PacketType\\\\\":7}\"}';
+        },$deviceCode));
+
+        $dataRequest = '{"DataType":4,"Data":"{\"CommandItem_Ts\":['.$deviceCode.']}"}';
+
+        return $this->curl_to_server($dataRequest);
+    }
+    /**
+     * A call api to send files from server to devices
+     * 
+     * @var devices is array of devices
+     * @var file
+     * @return curl_response
+     */
+    public function sendFileToDevice($devices, $file){
+
+        $devices = array_map(function($device) use ($file){
+            return '{\"DeviceID\":\"'.$device.'\",\"CommandSend\":\"{\\\"PacketType\\\":1,\\\"Data\\\":\\\"{\\\\\\\"URLlist\\\\\\\":[\\\\\\\"'.$file.'\\\\\\\"]}\\\"}\"}';
+        },$devices);
+
+        $devices = implode(',',$devices);
+
+        $dataRequest = '{"DataType":4,"Data":"{\"CommandItem_Ts\":['.$devices.']}"}';
+
+        //return $dataRequest;
+        return $this->curl_to_server($dataRequest);
+    }
+    /**
+     * A void to call api
+     * 
+     * @var dataRequest
+     * @return curl_response
+     */
+    public function curl_to_server($dataRequest)
+    {
+        // if (env('APP_ENV') == 'local')
+        //     dd($dataRequest);
+
+        $request = base64_encode($dataRequest);
+
+        $urlRequest = "http://103.130.213.161:906/" . $request;
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $urlRequest,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_CONNECTTIMEOUT => 20,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return json_decode($response);
     }
 }
