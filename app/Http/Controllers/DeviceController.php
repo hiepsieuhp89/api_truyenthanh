@@ -255,6 +255,9 @@ class DeviceController extends Controller
 
         curl_close($curl);
 
-        return json_decode($response);
+        return response([
+            'status' => 'success',
+            'messenge' => ''
+        ]);
     }
 }
