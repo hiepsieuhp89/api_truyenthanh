@@ -141,7 +141,6 @@ class DeviceController extends Controller
 
         return $this->playOnline($data['deviceCode'],$data['url']);
     }
-
     /**
      * Update the specified resource in storage.
      *
