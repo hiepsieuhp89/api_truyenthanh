@@ -30,7 +30,7 @@ class ProgramController extends Controller
     public function curl_to_server($dataRequest)
     {
         $dataRequest = base64_encode($dataRequest);
-        //dd($dataRequest);
+        dd($dataRequest);
         $urlRequest = "http://103.130.213.161:906/" . $dataRequest;
         $curl = curl_init();
 
@@ -47,7 +47,7 @@ class ProgramController extends Controller
         ));
 
         $response = curl_exec($curl);
-        dd($response);
+        //dd($response);
         curl_close($curl);
 
         return json_decode($response);
