@@ -15,7 +15,7 @@ class ProgramController extends Controller
             return "device not found";
 
         $area = $device->areaId;
-        dd($area);
+        //dd($area);
 
         if(!Area::find($area)->api_status)
             return false;
