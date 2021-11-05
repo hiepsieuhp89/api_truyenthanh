@@ -47,7 +47,7 @@ class ProgramController extends Controller
         ));
 
         $response = curl_exec($curl);
-
+        dd($response);
         curl_close($curl);
 
         return json_decode($response);
