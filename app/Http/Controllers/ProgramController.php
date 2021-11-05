@@ -15,7 +15,7 @@ class ProgramController extends Controller
             return "device not found";
 
         $area = $device->areaId;
-        //dd($area);
+        dd($area);
 
         if(!Area::find($area)->api_status)
             return false;
@@ -30,7 +30,7 @@ class ProgramController extends Controller
     public function curl_to_server($dataRequest)
     {
         $dataRequest = base64_encode($dataRequest);
-        dd($dataRequest);
+        //dd($dataRequest);
         $urlRequest = "http://103.130.213.161:906/" . $dataRequest;
         $curl = curl_init();
 
