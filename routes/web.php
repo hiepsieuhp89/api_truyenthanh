@@ -13,6 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return redirect()->intended('https://dev.truyenthanh.org.vn/');
-});
+// Route::get('/', function () {
+//     return redirect()->intended('https://dev.truyenthanh.org.vn/');
+// });
